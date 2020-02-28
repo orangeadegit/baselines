@@ -137,7 +137,8 @@ class Model(object):
 
         # Normalize the advantages
         advs = (advs - advs.mean()) / (advs.std() + 1e-8)
-
+        if actions[-1]==0:
+            obs[]
         td_map = {
             self.train_model.X : obs,
             self.A : actions,
