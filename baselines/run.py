@@ -233,7 +233,7 @@ def main(args):
             else:
                 actions, _, _, _ = model.step(obs)
 
-            obs, rew, done, _ = env.step(actions)
+            obs, rew, done, _ = env.step(actions[0:-1])
             episode_rew += rew
             env.render()
             done_any = done.any() if isinstance(done, np.ndarray) else done

@@ -1,6 +1,6 @@
 import numpy as np
 from baselines.common.runners import AbstractEnvRunner
-
+import random
 class Runner(AbstractEnvRunner):
     """
     We use this object to make a mini batch of experiences
@@ -23,10 +23,12 @@ class Runner(AbstractEnvRunner):
         mb_states = self.states
         epinfos = []
         # For n in range number of steps
+        listframes=[1,2,4,8]
+        frames=random.sample(listframes)
         for _ in range(self.nsteps):
             # Given observations, get action value and neglopacs
             # We already have self.obs because Runner superclass run self.obs[:] = env.reset() on init
-            actions, values, self.states, neglogpacs = self.model.step(self.obs, S=self.states, M=self.dones)
+            actions, values, self.states, neglogpacs = self.model.step(self.obs[0:frames-1], S=self.states, M=self.dones)
             mb_obs.append(self.obs.copy())
             mb_actions.append(actions)
             mb_values.append(values)
@@ -35,7 +37,7 @@ class Runner(AbstractEnvRunner):
 
             # Take actions in env and look the results
             # Infos contains a ton of useful informations
-            self.obs[:], rewards, self.dones, infos = self.env.step(actions)
+            self.obs[:], rewards, self.dones, infos = self.env.step(actions[0:-1])
             for info in infos:
                 maybeepinfo = info.get('episode')
                 if maybeepinfo: epinfos.append(maybeepinfo)

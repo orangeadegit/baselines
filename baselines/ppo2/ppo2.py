@@ -115,6 +115,7 @@ def learn(*, network, env, total_timesteps, eval_env = None, seed=None, nsteps=2
         model.load(load_path)
     # Instantiate the runner object
     runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
+    #model.step()
     if eval_env is not None:
         eval_runner = Runner(env = eval_env, model = model, nsteps = nsteps, gamma = gamma, lam= lam)
 
@@ -180,7 +181,8 @@ def learn(*, network, env, total_timesteps, eval_env = None, seed=None, nsteps=2
                     mbflatinds = flatinds[mbenvinds].ravel()
                     slices = (arr[mbflatinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
                     mbstates = states[mbenvinds]
-                    mblossvals.append(model.train(lrnow, cliprangenow, *slices, mbstates))
+                    mblossvals.append(model.train(lrnow, cliprangenow, *slices, mbstates))#here update
+
 
         # Feedforward --> get losses --> update
         lossvals = np.mean(mblossvals, axis=0)

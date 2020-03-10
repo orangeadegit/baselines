@@ -44,12 +44,15 @@ class PolicyWithValue(object):
         latent = tf.layers.flatten(latent)
 
         # Based on the action space, will select what probability distribution type
-        self.pdtype = make_pdtype(env.action_space)
+        self.pdtype = make_pdtype(env.action_space)#CategoricalPdType
 
-        self.pd, self.pi = self.pdtype.pdfromlatent(latent, init_scale=0.01)
+        self.pd,self.pdAppend,self.pi = self.pdtype.pdfromlatent(latent, init_scale=0.01)
 
         # Take an action
         self.action = self.pd.sample()
+        self.actionAppend=self.pdAppend.sample()
+        self.action.append(self.actionAppend)
+
 
         # Calculate the neg log of our probability
         self.neglogp = self.pd.neglogp(self.action)

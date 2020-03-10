@@ -15,6 +15,7 @@ def register(name):
 def nature_cnn(unscaled_images, **conv_kwargs):
     """
     CNN from Nature paper.
+    here to change
     """
     scaled_images = tf.cast(unscaled_images, tf.float32) / 255.
     activ = tf.nn.relu
