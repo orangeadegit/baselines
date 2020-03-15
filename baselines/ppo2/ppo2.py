@@ -153,6 +153,8 @@ def learn(*, network, env, total_timesteps, eval_env = None, seed=None, nsteps=2
         if eval_env is not None:
             eval_epinfobuf.extend(eval_epinfos)
 
+        print('nenv:',nenvs,'nsteps:',nsteps)
+        print('nbatch:',nbatch)
         # Here what we're going to do is for each minibatch calculate the loss and append it.
         mblossvals = []
         if states is None: # nonrecurrent version
@@ -166,6 +168,9 @@ def learn(*, network, env, total_timesteps, eval_env = None, seed=None, nsteps=2
                 for start in range(0, nbatch, nbatch_train):
                     end = start + nbatch_train
                     mbinds = inds[start:end]
+                    #print('mbind:',mbinds)
+                    #print('s-end:',start,'  ',end,'obs:',obs.shape)
+                    print(obs.shape, returns.shape, masks.shape, actions.shape, values.shape, neglogpacs.shape)
                     slices = (arr[mbinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
                     mblossvals.append(model.train(lrnow, cliprangenow, *slices))
         else: # recurrent version

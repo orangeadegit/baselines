@@ -43,19 +43,31 @@ class PolicyWithValue(object):
         vf_latent = tf.layers.flatten(vf_latent)
         latent = tf.layers.flatten(latent)
 
+        #print(latent)
         # Based on the action space, will select what probability distribution type
         self.pdtype = make_pdtype(env.action_space)#CategoricalPdType
 
         self.pd,self.pdAppend,self.pi = self.pdtype.pdfromlatent(latent, init_scale=0.01)
 
         # Take an action
-        self.action = self.pd.sample()
+        self.act = self.pd.sample()
         self.actionAppend=self.pdAppend.sample()
-        self.action.append(self.actionAppend)
+        #print('******')
+        #print(self.actionAppend)
+        print('--------') 
+        self.act=tf.cast(self.act,tf.int32)
+        self.actionAppend=tf.cast(self.actionAppend,tf.int32)
+        #print(self.act.shape)
+        #print('1111')
+        self.action=tf.stack([self.act,self.actionAppend],axis=1)
+        #self.action=tf.to_float(self.action)
+        print('sss:',self.action[:,0].shape)
 
 
         # Calculate the neg log of our probability
         self.neglogp = self.pd.neglogp(self.action)
+
+   
         self.sess = sess or tf.get_default_session()
 
         if estimate_q:
@@ -70,11 +82,12 @@ class PolicyWithValue(object):
         sess = self.sess
         feed_dict = {self.X: adjust_shape(self.X, observation)}
         for inpt_name, data in extra_feed.items():
+            #print(inpt_name)
             if inpt_name in self.__dict__.keys():
                 inpt = self.__dict__[inpt_name]
                 if isinstance(inpt, tf.Tensor) and inpt._op.type == 'Placeholder':
                     feed_dict[inpt] = adjust_shape(inpt, data)
-
+        
         return sess.run(variables, feed_dict)
 
     def step(self, observation, **extra_feed):

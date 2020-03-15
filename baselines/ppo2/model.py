@@ -43,7 +43,7 @@ class Model(object):
                 train_model = policy(microbatch_size, nsteps, sess)
 
         # CREATE THE PLACEHOLDERS
-        self.A = A = train_model.pdtype.sample_placeholder([None])
+        self.A = A = train_model.pdtype.sample_placeholder((None,2))
         self.ADV = ADV = tf.placeholder(tf.float32, [None])
         self.R = R = tf.placeholder(tf.float32, [None])
         # Keep track of old actor

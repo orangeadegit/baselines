@@ -98,7 +98,7 @@ def build_env(args):
         elif alg == 'trpo_mpi':
             env = make_env(env_id, env_type, seed=seed)
         else:
-            frame_stack_size = 16
+            frame_stack_size = 8
             env = make_vec_env(env_id, env_type, nenv, seed, gamestate=args.gamestate, reward_scale=args.reward_scale)
             env = VecFrameStack(env, frame_stack_size)
 

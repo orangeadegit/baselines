@@ -24,11 +24,14 @@ class Runner(AbstractEnvRunner):
         epinfos = []
         # For n in range number of steps
         listframes=[1,2,4,8]
-        frames=random.sample(listframes)
+        frames=random.sample(listframes,1)
+        print('star')
+        print(type(frames))
+        print(self.obs.shape)
         for _ in range(self.nsteps):
             # Given observations, get action value and neglopacs
             # We already have self.obs because Runner superclass run self.obs[:] = env.reset() on init
-            actions, values, self.states, neglogpacs = self.model.step(self.obs[0:frames-1], S=self.states, M=self.dones)
+            actions, values, self.states, neglogpacs = self.model.step(self.obs, S=self.states, M=self.dones)
             mb_obs.append(self.obs.copy())
             mb_actions.append(actions)
             mb_values.append(values)
@@ -37,7 +40,7 @@ class Runner(AbstractEnvRunner):
 
             # Take actions in env and look the results
             # Infos contains a ton of useful informations
-            self.obs[:], rewards, self.dones, infos = self.env.step(actions[0:-1])
+            self.obs[:], rewards, self.dones, infos = self.env.step(actions[:,0])
             for info in infos:
                 maybeepinfo = info.get('episode')
                 if maybeepinfo: epinfos.append(maybeepinfo)
