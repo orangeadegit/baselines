@@ -1,6 +1,7 @@
 import numpy as np
 from baselines.common.runners import AbstractEnvRunner
 import random
+import tensorflow as tf
 class Runner(AbstractEnvRunner):
     """
     We use this object to make a mini batch of experiences
@@ -24,14 +25,29 @@ class Runner(AbstractEnvRunner):
         epinfos = []
         # For n in range number of steps
         listframes=[1,2,4,8]
-        frames=random.sample(listframes,1)
-        print('star')
-        print(type(frames))
-        print(self.obs.shape)
+        obs_shape=self.obs.shape[0]
+        print(obs_shape,type(obs_shape),type(self.obs))
+        obs_choices=[]
+        #obs_tshape=[]
+        for i in range(obs_shape):
+            obs_choices.append(3)
+        #print('star')
+        #print(type(frames))
+        #print(self.obs.shape)
         for _ in range(self.nsteps):
             # Given observations, get action value and neglopacs
             # We already have self.obs because Runner superclass run self.obs[:] = env.reset() on init
+            
+            for i in range(obs_shape):
+                for j in range(self.obs.shape[1]):
+                    for k in range(self.obs.shape[2]):
+                        for l in range(self.obs.shape[3]):
+                            self.obs[i][j][k][l]=self.obs[i][j][k][l%listframes[obs_choices[i]]]
             actions, values, self.states, neglogpacs = self.model.step(self.obs, S=self.states, M=self.dones)
+            obs_choices=[]
+            #obs_tshape=[]
+            for i in range(obs_shape):
+                obs_choices.append(actions[i][1])
             mb_obs.append(self.obs.copy())
             mb_actions.append(actions)
             mb_values.append(values)
@@ -40,6 +56,7 @@ class Runner(AbstractEnvRunner):
 
             # Take actions in env and look the results
             # Infos contains a ton of useful informations
+            
             self.obs[:], rewards, self.dones, infos = self.env.step(actions[:,0])
             for info in infos:
                 maybeepinfo = info.get('episode')
