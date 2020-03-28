@@ -54,14 +54,14 @@ class PolicyWithValue(object):
         self.actionAppend=self.pdAppend.sample()
         #print('******')
         #print(self.actionAppend)
-        print('--------') 
+        #print('--------') 
         self.act=tf.cast(self.act,tf.int32)
         self.actionAppend=tf.cast(self.actionAppend,tf.int32)
         #print(self.act.shape)
         #print('1111')
         self.action=tf.stack([self.act,self.actionAppend],axis=1)
         #self.action=tf.to_float(self.action)
-        print('sss:',self.action[:,0].shape)
+        #print('sss:',self.action[:,0].shape)
 
 
         # Calculate the neg log of our probability
@@ -159,13 +159,13 @@ def build_policy(env, policy_network, value_network=None,  normalize_observation
             if isinstance(policy_latent, tuple):
                 policy_latent, recurrent_tensors = policy_latent
 
+                print('latent: ',policy_latent.shape)
                 if recurrent_tensors is not None:
                     # recurrent architecture, need a few more steps
                     nenv = nbatch // nsteps
                     assert nenv > 0, 'Bad input for recurrent policy: batch size {} smaller than nsteps {}'.format(nbatch, nsteps)
                     policy_latent, recurrent_tensors = policy_network(encoded_x, nenv)
                     extra_tensors.update(recurrent_tensors)
-
 
         _v_net = value_network
 

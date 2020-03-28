@@ -64,8 +64,8 @@ class CategoricalPdType(PdType):
     def pdfromlatent(self, latent_vector, init_scale=1.0, init_bias=0.0):
         pdparam = _matching_fc(latent_vector, 'pi', self.ncat, init_scale=init_scale, init_bias=init_bias)
         pdparamAppend=_matching_fc(latent_vector,'di',4,init_scale==init_scale,init_bias=init_bias)
-        print(pdparam)
-        print(pdparamAppend)
+        #print(pdparam)
+        #print(pdparamAppend)
         return self.pdfromflat(pdparam),self.pdfromflat(pdparamAppend), pdparam
 
     def param_shape(self):
@@ -169,7 +169,7 @@ class CategoricalPd(Pd):
         # Note: we can't use sparse_softmax_cross_entropy_with_logits because
         #       the implementation does not allow second-order derivatives...
         x=x[:,0]
-        print('start:',self.logits.shape,x.shape)
+        #print('start:',self.logits.shape,x.shape)
         if x.dtype in {tf.uint8, tf.int32, tf.int64}:
             # one-hot encoding
             x_shape_list = x.shape.as_list()
@@ -182,7 +182,7 @@ class CategoricalPd(Pd):
         else:
             # already encoded
             assert x.shape.as_list() == self.logits.shape.as_list()
-        print(self.logits.shape,x.shape)
+        #print(self.logits.shape,x.shape)
         return tf.nn.softmax_cross_entropy_with_logits_v2(
             logits=self.logits,
             labels=x)

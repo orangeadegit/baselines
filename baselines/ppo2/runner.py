@@ -2,6 +2,7 @@ import numpy as np
 from baselines.common.runners import AbstractEnvRunner
 import random
 import tensorflow as tf
+from tensorflow import float32  
 class Runner(AbstractEnvRunner):
     """
     We use this object to make a mini batch of experiences
@@ -26,11 +27,12 @@ class Runner(AbstractEnvRunner):
         # For n in range number of steps
         listframes=[1,2,4,8]
         obs_shape=self.obs.shape[0]
-        print(obs_shape,type(obs_shape),type(self.obs))
+        #print(obs_shape,type(obs_shape),type(self.obs))
         obs_choices=[]
         #obs_tshape=[]
+        tem=tf.zeros([1,84,84,1],float32)
         for i in range(obs_shape):
-            obs_choices.append(3)
+        	obs_choices.append(3)
         #print('star')
         #print(type(frames))
         #print(self.obs.shape)
@@ -39,15 +41,15 @@ class Runner(AbstractEnvRunner):
             # We already have self.obs because Runner superclass run self.obs[:] = env.reset() on init
             
             for i in range(obs_shape):
-                for j in range(self.obs.shape[1]):
-                    for k in range(self.obs.shape[2]):
-                        for l in range(self.obs.shape[3]):
-                            self.obs[i][j][k][l]=self.obs[i][j][k][l%listframes[obs_choices[i]]]
+            #    for j in range(self.obs.shape[1]):
+            #        for k in range(self.obs.shape[2]):
+            	for l in range(listframes[obs_choices[i]],8):
+            		self.obs[i,:,:,l]=tem
             actions, values, self.states, neglogpacs = self.model.step(self.obs, S=self.states, M=self.dones)
-            obs_choices=[]
+            #obs_choices=[]
             #obs_tshape=[]
-            for i in range(obs_shape):
-                obs_choices.append(actions[i][1])
+            #for i in range(obs_shape):
+                #obs_choices.append(actions[i][1])
             mb_obs.append(self.obs.copy())
             mb_actions.append(actions)
             mb_values.append(values)
